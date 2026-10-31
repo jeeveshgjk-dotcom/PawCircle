@@ -16,9 +16,11 @@ function daysFromNow(n: number) {
   return d.toISOString();
 }
 
-export async function seedDatabase() {
-  const existing = await db.households.count();
-  if (existing > 0) return; // already seeded
+export async function seedDatabase(force = false) {
+  if (!force) {
+    const existing = await db.households.count();
+    if (existing > 0) return; // already seeded
+  }
 
   const now = new Date().toISOString();
 
@@ -479,4 +481,25 @@ export async function seedDatabase() {
 
   console.log('✅ PawCircle demo data seeded successfully.');
 }
+
+export async function resetDemoDatabase() {
+  await Promise.all([
+    db.households.clear(),
+    db.familyMembers.clear(),
+    db.pets.clear(),
+    db.caretakerProfiles.clear(),
+    db.careOpportunities.clear(),
+    db.applications.clear(),
+    db.assignments.clear(),
+    db.routines.clear(),
+    db.careTasks.clear(),
+    db.careRecords.clear(),
+    db.earningsEntries.clear(),
+    db.memories.clear(),
+    db.checklists.clear(),
+  ]);
+
+  await seedDatabase(true);
+}
+
 
